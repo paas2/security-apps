@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-keycloak
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: keycloak
+    server: {{ .Values.spec.destination.server }}
+  project: keycloak
+  
+  source:
+    helm:
+      version: v3
+      valueFiles:
+      - value-{{ .Values.env }}.yaml
+    path: helm-charts
+    repoURL: https://github.com/paas2/keycloak.git 
+    targetRevision: HEAD
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true   
+    automated:  
+      prune: true             
